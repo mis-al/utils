@@ -1,0 +1,18 @@
+
+-------- Disk Information --------
+Model          : SAMSUNG HD161HJ                         
+Firmware Rev.  : JF100-19
+Serial No      : S0V3J9BPA23311      
+Capacity       : 137,438,952,960 bytes
+Support        : NCQ,Security,LBA48,SMART
+Security status: Disable
+SATA capability: SATA 2
+
+-------- Disk Information --------
+Model          : SAMSUNG HD161HJ                         
+Firmware Rev.  : JF100-19
+Serial No      : S0V3J9BPA23311      
+Capacity       : 137,438,952,960 bytes
+Support        : NCQ,Security,LBA48,SMART
+Security status: Disable
+SATA capability: SATA 2

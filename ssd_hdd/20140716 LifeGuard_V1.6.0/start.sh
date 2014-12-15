@@ -9,7 +9,7 @@ puts "Start"
 #`echo "- - -" > /sys/class/scsi_host/hostX/scan`
 
 #read smart for /dev/sda
-`./LifeGuard_V1.6.0_for_Linux /dev/sdX
+`./LifeGuard_V1.6.0_for_Linux /dev/sdX`
 
 #power down the sata
 echo 1 > /sys/block/sdX/device/delete

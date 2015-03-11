@@ -1,0 +1,24 @@
+development:
+  # define all loggers ...
+  loggers:
+    - name      : log1
+      level     : WARN
+      trace     : 'false'
+      outputters :
+      - datefile
+    - name      : log2
+      level     : DEBUG
+      trace     : 'true'
+      outputters :
+      - datefile
+
+  # define all outputters (incl. formatters)
+  outputters:
+  - type: DateFileOutputter
+    name: datefile
+    dirname: "log"
+    filename: "my_app.log" # notice the file extension is needed! 
+    formatter:
+      date_pattern: '%H:%M:%S'
+      pattern     : '%d %l: %m '
+      type        : PatternFormatter

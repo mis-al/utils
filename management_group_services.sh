@@ -6,7 +6,7 @@
 # Запускаем: management_group_services.sh
 
 
-sg_name="sctest" #имя группы сервисов
+sg_name="group1" #имя группы сервисов
 
 #echo "start!"
 if [ `whoami` != 'root' ]

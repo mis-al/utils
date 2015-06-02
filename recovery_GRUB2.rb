@@ -22,7 +22,7 @@ class Recovery
 
   def find_parts
     # find boot partition
-    @devs = `sudo fdisk -l | grep "#{@type_fs}" | cut -d' ' -f1`.split
+    @devs = `sudo fdisk -l | grep " #{@type_fs} " | cut -d' ' -f1`.split
     @flag = false
     @devs.each do |f|
       @flag = true if File.exist?(f)
@@ -73,7 +73,7 @@ class Recovery
       `sudo update-grub --output=#{@mount_dir}/boot/grub/grub.cfg`
     end
   end
-  
+
   def clean
     Dir.rmdir(@mount_dir) if Dir.exist?(@mount_dir)
     if @root_part && !`mount | grep #{@root_part}`.empty?

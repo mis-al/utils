@@ -16,7 +16,7 @@ unless File.exist? prg
   exit 0
 end
 
-if ARGV[0].nil? || ARGV[0].nil?
+if ARGV[0].nil? || ARGV[1].nil?
   puts "Error argument"
   exit 1
 end

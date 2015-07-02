@@ -18,18 +18,18 @@ module EchoServer
 end
 
 # Note that this will block current thread.
-EM.run do
-  array = (1..100).to_a
-  @b = []
-  tickloop = EM.tick_loop do
-    if array.empty?
-      :stop
-    else
-
-      a = (array.shift)**100000
-      @b << a
-    end
-  end
-
-  tickloop.on_stop {  p @b; EM.stop }
-end #  EventMachine.start_server "127.0.0.1", 8081, EchoServer
+# EM.run do
+#   array = (1..100).to_a
+#   @b = []
+#   tickloop = EM.tick_loop do
+#     if array.empty?
+#       :stop
+#     else
+#
+#       a = (array.shift)**100000
+#       @b << a
+#     end
+#   end
+#
+#   tickloop.on_stop {  p @b; EM.stop }
+#end #  EventMachine.start_server "127.0.0.1", 8081, EchoServer

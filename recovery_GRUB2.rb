@@ -22,7 +22,7 @@ class Recovery
 
   def find_parts
     # find boot partition
-    @devs = `sudo fdisk -l | grep " #{@type_fs} " | cut -d' ' -f1`.split
+    @devs = `sudo fdisk -l | grep " #{@type_fs} " | cut -d' ' -f1 | grep -v Disk`.split
     @flag = false
     @devs.each do |f|
       @flag = true if File.exist?(f)

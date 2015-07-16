@@ -10,7 +10,7 @@ class Recovery
 
   def initialize
     @type_fs = '83' #Linux
-    @mount_dir = "/tmp/#{rand}"
+    @mount_dir = File.join('','tmp',srand.to_s)
     @root_part = nil
     @select_dev = nil
     @devs = nil
@@ -36,7 +36,7 @@ class Recovery
 
   def select_dev
     while true
-      puts `lsblk #{(@devs.map { |e| e[0..-2] }).join(' ')}`
+      puts `lsblk #{(@devs.map { |e| e[0..-2] }).uniq.join(' ')}`
       printf "Select device to install GRUB(example /dev/sda):"
       @select_dev = gets.chomp
       if @select_dev == 'q'
@@ -53,7 +53,7 @@ class Recovery
   end
 
   def grub_install
-    @root_part = @devs.join(' ').scan(/#{@select_dev}\d/)
+    @root_part = @devs.join(' ').scan(@select_dev)[0]
     unless File.exist? @root_part
       puts "No such file #{@root_part}"
       clean
@@ -65,16 +65,17 @@ class Recovery
       clean
       exit 1
     end
-    puts `sudo grub-install --root-directory=#{@mount_dir} #{@select_dev}`
+    puts `sudo grub-install --root-directory=#{@mount_dir} #{@select_dev[0..-2]}`
   end
 
   def update_grub
     if @mount_dir && Dir.exist?(@mount_dir)
-      `sudo update-grub --output=#{@mount_dir}/boot/grub/grub.cfg`
+      puts `sudo update-grub --output=#{@mount_dir}/boot/grub/grub.cfg`
     end
   end
 
   def clean
+    `sudo umount #{@mount_dir}` if `mount`.include? @mount_dir
     Dir.rmdir(@mount_dir) if Dir.exist?(@mount_dir)
     if @root_part && !`mount | grep #{@root_part}`.empty?
       `sudo umount #{@root_part}`

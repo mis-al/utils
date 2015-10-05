@@ -3,12 +3,69 @@
 require 'fileutils'
 require 'log4r'
 require 'yaml'
+require 'choice'
+PROGRAM_VERSION = 1
+
+Choice.options do
+  header ''
+  header 'Specific options:'
+
+  option :mysql_v do
+    short '-v'
+    desc 'Specify mysql version. Default 5.6.22'
+    default '5.6.22'
+    filter do |value|
+      res = /^\d+\.\d+\.\d+\z/.match(value)
+      if res
+        value
+      else
+        puts "Wrong value -v"
+        exit
+      end
+    end
+  end
+
+  option :install_dep do
+    short '-d'
+    desc 'Install dependency mysql.'
+  end
+
+  option :remove_odl do
+    short '-r'
+    desc 'Remove old version mysql.'
+  end
+
+  option :save do
+    short '-s'
+    desc 'Save downloading pkg'
+  end
+
+  separator ''
+  separator 'Common options: '
+
+  option :help do
+    long '--help'
+    desc 'Show this message'
+  end
+
+  option :version do
+    long '--version'
+    desc 'Show version'
+    action do
+      puts "#{__FILE__} v#{PROGRAM_VERSION}"
+      exit
+    end
+  end
+end
 
 # Предварительно надо деинсталировать libmysqlclient18:i386 библиотеку. И возможно использующую ее приложения
+
 class Mysql
 
+  attr_accessor :arch, :tmp_dir
+
   def initialize h
-    attr_accessor :arch, :tmp_dir
+
     initialize_logger
     @log.info "Initialize"
 
@@ -16,7 +73,7 @@ class Mysql
     @tmp_dir = h[:download_dir] || File.join('', 'tmp', srand.to_s)
     @arch = h[:arch] || '1ubuntu12.04_amd64'
     @arch += '.deb'
-    #prepare
+    prepare
   end
 
   def prepare
@@ -34,13 +91,14 @@ class Mysql
   end
 
   def install_dependency
-    @log.debug __method__
 
     unless @list_inst_pkg.include?('libaio1')
       @log.debug "Install libaio1"
       @log.debug `sudo apt-get install libaio1`
     end
+  end
 
+  def install
     @log.debug "Пакетов к установке: #{(@list_inst_pkg.size - (@list_inst_pkg - @ms).size)} "
 
     if @list_inst_pkg.size - (@list_inst_pkg - @ms).size < @ms.size
@@ -55,7 +113,6 @@ class Mysql
           pakage = name + @version + @arch
           unless @list_inst_pkg.include?(name)
             @log.info pakage.center(10, '-')
-            #@log.info "Installing #{pakage}".center(50, '-')
             res = `sudo dpkg -i #{pakage}`
             unless ?$ && ?$.exitstatus.zero?
               @log.debug res
@@ -66,14 +123,12 @@ class Mysql
 
       end
     end
-
-    #clear
   end
 
   def create_databases
     @log.debug __method__
     puts `( echo "UPDATE user SET Password=PASSWORD('12345') where USER='root';"; echo 'FLUSH PRIVILEGES;'; ) | mysql -uroot mysql`
-    puts `/etc/init.d/mysql restart`
+    puts `sudo /etc/init.d/mysql restart`
     #puts `( echo 'create database egmsite character set utf8;'; echo 'create database getfood character set utf8;'; ) | mysql -uroot -p12345`
   end
 
@@ -115,10 +170,24 @@ gem_install =
         "bundler -v '1.8.2'"
     ]
 
-res = Mysql.new :list_pkg => ms
-#res.install_dependency
-#res.create_databases
-#res.clear
+
+#puts Choice[:mysql_v]
+
+mysql = Mysql.new :list_pkg => ms, :version => Choice[:mysql_v]
+if Choice[:install_dep]
+#  mysql.install_dependency
+end
+
+#puts Choice[:remove_odl]
+
+mysql.install
+
+if Choice[:save]
+  puts "Directory pkg: #{mysql.tmp_dir}"
+  exit
+end
+mysql.clear
+puts "Finish"
 
 
 

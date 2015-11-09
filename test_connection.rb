@@ -2,13 +2,24 @@
 
 require 'benchmark'
 require 'net/http'
+require 'open-uri'
 
 @source = nil
 
-@host = ARGV[0] ||'stackoverflow.com'
-@path = ARGV[1] || '/index.html'
+@host = ARGV[1] ||'stackoverflow.com'
+@path = ARGV[2] || '/index.html'
+
+
 Benchmark.bm do |x|
-  x.report { @source = Net::HTTP.get(@host,@path ) }
+    10.times do |n|
+        if ARGV[0] == 'h'
+	    puts "Use Net::HTTP"	
+            x.report { @source = Net::HTTP.get(@host,@path ) }
+        else
+	    puts "Open-uri"
+	    x.report { @source = open("http://#{@host}"){|f|} }
+        end
+    end
 end
 
 #puts @source

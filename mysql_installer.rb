@@ -30,7 +30,7 @@ Choice.options do
     desc 'Install dependency mysql.'
   end
 
-  option :remove_odl do
+  option :remove do
     short '-r'
     desc 'Remove old version mysql.'
   end
@@ -73,6 +73,7 @@ class Mysql
     @tmp_dir = h[:download_dir] || File.join('', 'tmp', srand.to_s)
     @arch = h[:arch] || '1ubuntu12.04_amd64'
     @arch += '.deb'
+    @version = '_' + h[:version] +'-'
     prepare
   end
 
@@ -103,7 +104,7 @@ class Mysql
 
     if @list_inst_pkg.size - (@list_inst_pkg - @ms).size < @ms.size
       #@log.info "Install '5.6.22'?"
-      @version = '_' + h[:version] +'-'
+      #@version = '_' + @version +'-'
       Dir.chdir @tmp_dir do
         @log.debug `wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-server#{@version}#{@arch}-bundle.tar`
         @log.debug `tar -xvf  mysql-server#{@version}#{@arch}-bundle.tar`
@@ -114,13 +115,27 @@ class Mysql
           unless @list_inst_pkg.include?(name)
             @log.info pakage.center(10, '-')
             res = `sudo dpkg -i #{pakage}`
-            unless ?$ && ?$.exitstatus.zero?
+            unless $? && $?.exitstatus.zero?
               @log.debug res
             end
 
           end
         end
 
+      end
+    end
+  end
+
+  def remove add_pkg
+    @log.debug __method__
+    rm_pkg << add_pkg.flatten if !add_pkg.nil? and add_pkg.kind_of? Array
+    rm_pkg = @list_inst_pkg & @ms
+    @log.info rm_pkg
+    rm_pkg.reverse.each do |pkg|
+      @log.info pkg.center(10, '-')
+      res = `sudo dpkg -r #{pkg}`
+      unless $? && $?.exitstatus.zero?
+        @log.debug res
       end
     end
   end
@@ -135,7 +150,7 @@ class Mysql
   private
 
   def initialize_logger
-    Log4r::Logger.root.level = Log4r::WARN
+    Log4r::Logger.root.level = Log4r::DEBUG #WARN
     @log = Log4r::Logger.new("mysql")
     Log4r::StderrOutputter.new 'console'
     @log.add 'console'
@@ -175,10 +190,13 @@ gem_install =
 
 mysql = Mysql.new :list_pkg => ms, :version => Choice[:mysql_v]
 if Choice[:install_dep]
-#  mysql.install_dependency
+  mysql.install_dependency
 end
 
-#puts Choice[:remove_odl]
+if Choice[:remove]
+  mysql.remove nil
+  exit
+end
 
 mysql.install
 
@@ -188,6 +206,3 @@ if Choice[:save]
 end
 mysql.clear
 puts "Finish"
-
-
-

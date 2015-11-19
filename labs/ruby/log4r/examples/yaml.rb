@@ -6,8 +6,8 @@ require 'log4r'
 require 'log4r/yamlconfigurator'
 # we use various outputters, so require them, otherwise config chokes
 require 'log4r/outputter/datefileoutputter'
-#require 'log4r/outputter/emailoutputter'
-#require 'log4r/outputter/scribeoutputter'
+require 'log4r/outputter/emailoutputter'
+require 'log4r/outputter/scribeoutputter'
 require 'log4r/outputter/syslogoutputter'
 
 cfg = Log4r::YamlConfigurator # shorthand
@@ -30,4 +30,9 @@ end
 #Log4r::Outputter['email'].level = Log4r::OFF
 # the other two outputters log to stderr and a timestamped file in ./logs
 log = Log4r::Logger['mylogger']
+
 do_logging( log )
+
+
+
+puts Log4r::Logger['yourlogger'].inspect

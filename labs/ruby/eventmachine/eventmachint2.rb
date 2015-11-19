@@ -6,8 +6,11 @@ module EchoServer
     puts "-- someone connected to the echo server!"
   end
 
+  def connection_completed
+    puts "#{__method__}"
+  end
   def receive_data data
-    sleep 10
+    ##
     send_data ">>>you sent: #{data}"
     close_connection if data =~ /quit/i
   end
@@ -18,7 +21,7 @@ module EchoServer
 end
 
 # Note that this will block current thread.
-# EM.run do
+ EM.run do
 #   array = (1..100).to_a
 #   @b = []
 #   tickloop = EM.tick_loop do
@@ -32,4 +35,8 @@ end
 #   end
 #
 #   tickloop.on_stop {  p @b; EM.stop }
-#end #  EventMachine.start_server "127.0.0.1", 8081, EchoServer
+
+ EventMachine.start_server "127.0.0.1", 8081, EchoServer
+#   EventMachine::connect "127.0.0.1", 8081, EchoServer
+#   EventMachine::connect "127.0.0.1", 8081, EchoServer
+end

@@ -1,0 +1,27 @@
+---
+- hosts: work
+  user: mis-al
+  tasks:
+    - name: install sshfs
+      apt: name=sshfs state=present
+
+    - name: check version sshfs
+      raw: sshfs --version
+
+- hosts: local
+  user: mis-al
+  tasks:
+    - name: install sshfs
+      apt: name=sshfs state=present
+
+    - name: Delete repos dir
+      raw: rm -rf {{dst_repos}}
+
+    - name: Delete sccs dir
+      raw: rm -rf {{dst_sccs}}
+
+    - name: Create repos dir
+      file: path={{dst_repos}} state=directory
+
+    - name: Create sccs dir
+      file: path={{dst_sccs}} state=directory

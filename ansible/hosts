@@ -1,0 +1,17 @@
+[local]
+localhost ansible_connection=local
+
+[home]
+misal.by:60606 ansible_connection=ssh
+
+[work]
+gate1.gamemc.by:60606  ansible_connection=ssh
+
+[local:vars]
+src="mis-al@gate1.gamemc.by"
+dst_dir='/home/mis-al/work/'
+src_dir='work/'
+src_sccs="{{ src_dir }}sccs/"
+src_repos="{{ src_dir }}repos/"
+dst_sccs="{{ dst_dir }}sccs/"
+dst_repos="{{ dst_dir}}repos/"

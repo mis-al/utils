@@ -1,0 +1,16 @@
+---
+- hosts: local
+  user: mis-al
+  tasks:
+
+    - name: install sshfs
+      apt: name=sshfs state=present
+
+    - name: mount repos
+      raw: sshfs -p 60606 {{src}}:{{src_repos}} {{dst_repos}}
+      tags: mount
+
+    - name: mount sccs
+      raw: sshfs -p 60606 {{src}}:{{src_sccs}} {{dst_sccs}}
+      tags: mount
+

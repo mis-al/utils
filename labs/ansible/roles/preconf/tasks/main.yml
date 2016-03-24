@@ -1,0 +1,2 @@
+ - name: Установка curl
+   apt: pkg=curl
